@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 wecho() {
   [[ ! -v COLUMNS ]] && {
@@ -20,25 +20,26 @@ wecho() {
 declare -fx wecho
 
 if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
-  set -eu
+  set -euo pipefail
   if (($# == 0)) || [[ " $* " == *' -h '* ]] || [[ " $* " == *' --help '* ]]; then
     wecho 0 "function: wecho"
-    wecho 1 "desc:"
+    wecho 0 "desc:"
     wecho 2 "'echo' command wrapper for indenting and wordwrapping. All 'echo' options remain valid."
-    wecho 1 "usage:"
+    wecho 0 "usage:"
     wecho 2 "wecho {indent_level} [{echo_opts...}] [{echo_args...}]"
-    wecho 1 "desc:"
+    wecho 0 "desc:"
     wecho 2 "Uses 'fmt' to wordwrap 'echo'-ed text to COLUMNS width, then uses 'sed' to indent every line by {indent_level}*4 spaces. If COLUMNS is not defined, then 'tput' is used to calculate it's value."
-    wecho 1 "depends:"
+    wecho 0 "depends:"
     wecho 2 "fmt sed [tput] [COLUMNS]"
-    wecho 1 "eg:"
+    wecho 0 "eg:"
     wecho 2 "wecho 2 \"a really, really, ... ... long sentence or paragraphs.\""
     COLUMNS=256
     wecho 2 "COLUMNS=256; wecho 1 \"another ... really ... long ... hunk ... of ... text.\" # indent 4 spaces+wordwrap."
     exit 1
   fi
   declare -i indent
-  indent=$(($1)) || { >&2 echo "Invalid width argument '$1'."; exec $0 --help; exit 1;}
+	#shellcheck disable=SC2034
+  indent=$(($1)) || { >&2 echo "Invalid width argument '$1'."; exec $0 --help; }
 
 	wecho "$@"
 fi
